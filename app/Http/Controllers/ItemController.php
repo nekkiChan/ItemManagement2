@@ -6,9 +6,13 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Item;
+use App\Models\ItemType;
 
 class ItemController extends Controller
 {
+    protected $items;
+    protected $item_types;
+
     /**
      * Create a new controller instance.
      *
@@ -17,6 +21,8 @@ class ItemController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        $this->items = new Item;
+        $this->item_types = new ItemType;
     }
 
     /**
@@ -24,11 +30,15 @@ class ItemController extends Controller
      */
     public function index()
     {
-        // 商品一覧取得
-        $items = Item::all();
+        // ユーザー情報取得
         $user = Auth::user();
+        // 商品一覧取得
+        foreach ($this->items->all() as $item) {
+            $item->type = $this->item_types->find($item->type)->name;
+            $items[] = $item;
+        }
 
-        return view('item.index', compact('items', 'user'));
+        return view('item.index', compact('user', 'items'));
     }
 
     /**
@@ -45,13 +55,28 @@ class ItemController extends Controller
                 // バリデーション
                 $this->validate($request, [
                     'name' => 'required|max:100',
+                    'type' => 'required|max:100',
                 ]);
+
+                // 種別登録
+                // テーブル item_types で該当するデータをクエリ
+                $itemType = ItemType::where('name', $request->type)->first();
+
+                // クエリの結果を確認し、該当するデータが存在するかを判定
+                if ($itemType) {
+                    $type_id = $itemType->id;
+                } else {
+                    $this->item_types->create([
+                        'name' => $request->type,
+                    ]);
+                    $type_id = ItemType::latest()->first()->id;
+                }
 
                 // 商品登録
                 Item::create([
                     'user_id' => Auth::user()->id,
                     'name' => $request->name,
-                    'type' => $request->type,
+                    'type' => $type_id,
                     'detail' => $request->detail,
                 ]);
 
