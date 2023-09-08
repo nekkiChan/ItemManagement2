@@ -9,6 +9,17 @@ class ItemType extends Model
 {
     use HasFactory;
 
-    protected $table = 'item_types';
     protected $fillable = ['name'];
+
+    public function items()
+    {
+        return $this->hasMany(Item::class, 'type');
+    }
+
+    public function searchItem($keyword)
+    {
+        return $this->items()
+            ->where('name', 'like', "%{$keyword}%")
+            ->get();
+    }
 }

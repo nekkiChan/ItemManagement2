@@ -3,14 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\ItemType;
 
 class Item extends Model
 {
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
+    // コンストラクターは不要です
+
     protected $fillable = [
         'user_id',
         'name',
@@ -18,19 +16,28 @@ class Item extends Model
         'detail',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-    ];
+    public function itemType()
+    {
+        return $this->belongsTo(ItemType::class, 'type');
+    }
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-    ];
+    public function searchItem($keyword, $column = null)
+    {
+        $query = $this->newQuery();
+
+        if (is_null($column)) {
+            $query->where(function ($query) use ($keyword) {
+                $query->where('name', 'like', "%{$keyword}%")
+                    ->orWhere('detail', 'like', "%{$keyword}%");
+            });
+        } else if ($column == "type") {
+            $query->whereHas('itemType', function ($query) use ($keyword) {
+                $query->where('name', 'like', "%{$keyword}%");
+            });
+        } else {
+            $query->where($column, 'like', "%{$keyword}%");
+        }
+
+        return $query->get();
+    }
 }
