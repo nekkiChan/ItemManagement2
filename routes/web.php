@@ -26,6 +26,8 @@ Route::prefix('items')->group(function () {
     Route::get('/search', [App\Http\Controllers\ItemController::class, 'search'])->name('items.search');
     Route::get('/add', [App\Http\Controllers\ItemController::class, 'add']);
     Route::post('/add', [App\Http\Controllers\ItemController::class, 'add']);
+    Route::get('/edit', [App\Http\Controllers\ItemController::class, 'edit'])->name('items.edit');
+    Route::post('/edit', [App\Http\Controllers\ItemController::class, 'edit']);
 });
 
 Auth::routes();

@@ -38,7 +38,7 @@
                                 @else
                                 @endcan
                             </div><!-- /.card-tools -->
-                    </div><!-- /.card-header -->
+                        </div><!-- /.card-header -->
                         <div class="card-body table-responsive p-0">
                             <table class="table table-hover text-nowrap">
                                 <thead>
@@ -47,6 +47,9 @@
                                         <th>名前</th>
                                         <th>種別</th>
                                         <th>詳細</th>
+                                        @can('view-user', $user)
+                                            <th></th>
+                                        @endcan
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -56,6 +59,30 @@
                                             <td>{{ $item->name }}</td>
                                             <td>{{ $item->type }}</td>
                                             <td>{{ $item->detail }}</td>
+                                            @can('view-user', $user)
+                                                <td>
+                                                    <div style="height: 1em" class="d-flex align-items-center">
+                                                        <form method="GET" action="{{ route('items.edit') }}"
+                                                            class="d-flex align-items-center">
+                                                            @csrf
+                                                            <input type="hidden" name="item_id" value="{{ $item->id }}">
+                                                            <button type="submit" class="btn btn-link p-0 m-0">
+                                                                <img src="{{ asset('img/edit.svg') }}" alt=""
+                                                                    style="height: 20px; margin-right: 2px;">
+                                                            </button>
+                                                        </form>
+
+                                                        {{-- <a href="{{ route('items.edit') }}" class="h-100" name='test'>
+                                                            <img src="{{ asset('img/edit.svg') }}" alt=""
+                                                                class="h-100 mr-2">
+                                                        </a> --}}
+                                                        <a href="{{ route('items.search') }}" class="h-100">
+                                                            <img src="{{ asset('img/trash.svg') }}" alt=""
+                                                                class="h-100 ml-2">
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            @endcan
                                         </tr>
                                     @endforeach
                                 </tbody>
