@@ -22,13 +22,38 @@ class ItemController extends Controller
 
         // 商品一覧取得
         // with メソッドを使って ItemType モデルを事前に読み込む
-        $items = Item::with('itemType')->get();
-        foreach ($items->all() as $item) {
-            $item->type = $items->find($item->type)->itemType->name;
-            $items[$items->find($item->id)->id - 1] = $item;
-        }
+        $items = Item::with('itemType')->where('status', '!=', 'delete')->get();
+        $items->transform(function ($item) {
+            $item->type = $item->itemType->name;
+            return $item;
+        });
 
         return view('item.index', compact('user', 'items'));
+    }
+
+    /**
+     * アーカイブ一覧
+     */
+    public function archive()
+    {
+        // ユーザー情報取得
+        $user = Auth::user();
+
+        if (Gate::allows('view-user', $user)) {
+            // 商品一覧取得
+            // with メソッドを使って ItemType モデルを事前に読み込む
+            $items = Item::with('itemType')->where('status', '=', 'delete')->get();
+            $items->transform(function ($item) {
+                $item->type = $item->itemType->name;
+                return $item;
+            });
+
+            return view('item.archive', compact('user', 'items'));
+
+        } else {
+            // 一般アカウントの場合
+            return redirect('/items/archive');
+        }
     }
 
     /**
@@ -141,4 +166,13 @@ class ItemController extends Controller
             return redirect('/items');
         }
     }
+
+    public function convertStatus(Request $request)
+    {
+        $item = new Item;
+        $item->convertStatus($request->item_id);
+
+        return redirect('/items');
+    }
+
 }

@@ -23,11 +23,13 @@ Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('ho
 
 Route::prefix('items')->group(function () {
     Route::get('/', [App\Http\Controllers\ItemController::class, 'index']);
+    Route::get('/archive', [App\Http\Controllers\ItemController::class, 'archive']);
     Route::get('/search', [App\Http\Controllers\ItemController::class, 'search'])->name('items.search');
     Route::get('/add', [App\Http\Controllers\ItemController::class, 'add']);
     Route::post('/add', [App\Http\Controllers\ItemController::class, 'add']);
     Route::get('/edit', [App\Http\Controllers\ItemController::class, 'edit'])->name('items.edit');
     Route::post('/edit', [App\Http\Controllers\ItemController::class, 'edit']);
+    Route::get('/convert_status', [App\Http\Controllers\ItemController::class, 'convertStatus'])->name('items.convert_status');
 });
 
 Auth::routes();

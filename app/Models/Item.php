@@ -10,6 +10,7 @@ class Item extends Model
     // コンストラクターは不要です
 
     protected $fillable = [
+        'status',
         'user_id',
         'name',
         'type',
@@ -39,5 +40,14 @@ class Item extends Model
         }
 
         return $query->get();
+    }
+
+    public function convertStatus($id)
+    {
+        if($this->find($id)->status== 'active'){
+            $this->find($id)->update(['status'=>'delete']);
+        } else {
+            $this->find($id)->update(['status'=>'active']);
+        }
     }
 }
