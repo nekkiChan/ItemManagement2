@@ -23,6 +23,7 @@ class ItemController extends Controller
         // 商品一覧取得
         // with メソッドを使って ItemType モデルを事前に読み込む
         $items = Item::with('itemType')->where('status', '!=', 'delete')->get();
+        // 種別ID→種別名
         $items->transform(function ($item) {
             $item->type = $item->itemType->name;
             return $item;
@@ -64,12 +65,31 @@ class ItemController extends Controller
         // ユーザー情報取得
         $user = Auth::user();
 
+        // 検索タイプ
+        $search_type = $request->input('search_type');
         // 検索ワードに基づいて商品を検索
         $keyword = $request->input('keyword');
+
         // 検索ワードが空欄の場合、絞り込みはしない
         if (is_null($keyword)) {
             $items = Item::all();
+        } else if ($search_type == 'type') {
+            // 種別検索
+            $items = Item::whereHas(
+                'itemType',
+                function ($query) use ($keyword) {
+                    $query->where('name', 'like', "%$keyword%");
+                }
+            )->get();
+        } else if ($search_type == 'name' || $search_type == 'detail') {
+            // 名前検索・詳細検索
+            $items = Item::where(
+                function ($query) use ($keyword, $search_type) {
+                    $query->where($search_type, 'like', "%$keyword%");
+                }
+            )->get();
         } else {
+            // 全体検索
             $items = Item::where(
                 function ($query) use ($keyword) {
                     $query->where('name', 'like', "%$keyword%")
@@ -82,6 +102,12 @@ class ItemController extends Controller
                     }
                 )->get();
         }
+
+        // 種別ID→種別名
+        $items->transform(function ($item) {
+            $item->type = $item->itemType->name;
+            return $item;
+        });
 
         return view('item.index', compact('user', 'items'));
     }

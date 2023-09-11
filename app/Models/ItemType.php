@@ -9,7 +9,7 @@ class ItemType extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name'];
+    protected $fillable = ['id', 'name'];
 
     public function items()
     {
