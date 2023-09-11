@@ -44,7 +44,7 @@
 
                     <div class="card-footer">
                         <input type="hidden" name="id" value="{{ $item->id }}">
-                        <button type="submit" class="btn btn-primary">編集</button>
+                        <button type="submit" class="btn btn-primary">更新</button>
                     </div>
                 </form>
             </div>
