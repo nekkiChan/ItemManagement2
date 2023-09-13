@@ -64,18 +64,25 @@ class ItemController extends Controller
     {
         // ユーザー情報取得
         $user = Auth::user();
+        // ページ取得
+        $page = $request->input('page');
 
         // 検索タイプ
         $search_type = $request->input('search_type');
         // 検索ワードに基づいて商品を検索
         $keyword = $request->input('keyword');
 
+        // ステータス
+        $status = $request->input('status');
+        // ステータスに即した商品
+        $items = Item::where('status', '=', "$status");
+
         // 検索ワードが空欄の場合、絞り込みはしない
         if (is_null($keyword)) {
-            $items = Item::all();
+            $items = $items->get();
         } else if ($search_type == 'type') {
             // 種別検索
-            $items = Item::whereHas(
+            $items = $items->whereHas(
                 'itemType',
                 function ($query) use ($keyword) {
                     $query->where('name', 'like', "%$keyword%");
@@ -83,14 +90,14 @@ class ItemController extends Controller
             )->get();
         } else if ($search_type == 'name' || $search_type == 'detail') {
             // 名前検索・詳細検索
-            $items = Item::where(
+            $items = $items->where(
                 function ($query) use ($keyword, $search_type) {
                     $query->where($search_type, 'like', "%$keyword%");
                 }
             )->get();
         } else {
             // 全体検索
-            $items = Item::where(
+            $items = $items->where(
                 function ($query) use ($keyword) {
                     $query->where('name', 'like', "%$keyword%")
                         ->orWhere('detail', 'like', "%$keyword%");
@@ -109,7 +116,7 @@ class ItemController extends Controller
             return $item;
         });
 
-        return view('item.index', compact('user', 'items'));
+        return view("item.$page", compact('user', 'items'));
     }
 
 
@@ -156,7 +163,13 @@ class ItemController extends Controller
      */
     public function edit(Request $request)
     {
+        // ユーザー取得
         $user = Auth::user();
+        // ページ取得
+        $page = $request->input('page');
+        // 商品のステータス取得
+        $status = $request->input('status');
+        $items = Item::where('status', '=', "$status")->get();
 
         if (Gate::allows('view-user', $user)) {
             // 管理者アカウントの場合
@@ -179,7 +192,7 @@ class ItemController extends Controller
                     'detail' => $request->detail
                 ]);
 
-                return redirect('/items');
+                return view("item.$page", compact('user', 'items'));
             } else if ($request->isMethod('get')) {
                 // GETリクエストのとき
                 $items = Item::with('itemType')->get();

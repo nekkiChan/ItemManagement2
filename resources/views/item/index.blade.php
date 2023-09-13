@@ -14,6 +14,8 @@
                     <h3 class="card-title">商品一覧</h3>
                     <div class="card-tools">
                         <form action="{{ route('items.search') }}" method="GET" class="input-group input-group-sm">
+                            <input type="hidden" name="status" value="active">
+                            <input type="hidden" name="page" value="index">
                             <select name="search_type">
                                 <option value="">全体検索</option>
                                 <option value="name">名前検索</option>
@@ -54,6 +56,8 @@
                                                     class="d-flex align-items-center">
                                                     @csrf
                                                     <input type="hidden" name="item_id" value="{{ $item->id }}">
+                                                    <input type="hidden" name="status" value="{{ $item->status }}">
+                                                    <input type="hidden" name="page" value="index">
                                                     <button type="submit" class="btn btn-link p-0 m-0">
                                                         <img src="{{ asset('img/edit.svg') }}" alt=""
                                                             style="height: 20px;" class="mr-2">
