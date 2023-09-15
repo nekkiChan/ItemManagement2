@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', '商品一覧')
+@section('title', 'アーカイブ一覧')
 
 @section('content_header')
     <h1>アーカイブ一覧</h1>
@@ -11,7 +11,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">商品一覧</h3>
+                    <h3 class="card-title">アーカイブ一覧</h3>
                     <div class="card-tools">
                         <form action="{{ route('items.search') }}" method="GET" class="input-group input-group-sm">
                             <input type="hidden" name="status" value="delete">
