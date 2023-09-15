@@ -20,8 +20,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (env('APP_ENV') === 'develop' || env('APP_ENV') === 'production') {
-            URL::forceScheme('https');
+        // SSL化
+        if (\App::environment(['production']) || \App::environment(['develop'])) {
+            \URL::forceScheme('https');
         }
     }
 }
