@@ -15,10 +15,13 @@ class ItemController extends Controller
     /**
      * 商品一覧
      */
-    public function index()
+    public function index(Request $request)
     {
         // ユーザー情報取得
         $user = Auth::user();
+
+        // ページ情報
+        $page = 'index';
 
         // 商品一覧取得
         // with メソッドを使って ItemType モデルを事前に読み込む
@@ -29,16 +32,19 @@ class ItemController extends Controller
             return $item;
         });
 
-        return view('item.index', compact('user', 'items'));
+        return view('item.index', compact('user', 'items', 'page'));
     }
 
     /**
      * アーカイブ一覧
      */
-    public function archive()
+    public function archive(Request $request)
     {
         // ユーザー情報取得
         $user = Auth::user();
+
+        // ページ情報
+        $page = 'archive';
 
         if (Gate::allows('view-user', $user)) {
             // 商品一覧取得
@@ -49,7 +55,7 @@ class ItemController extends Controller
                 return $item;
             });
 
-            return view('item.archive', compact('user', 'items'));
+            return view('item.archive', compact('user', 'items', 'page'));
 
         } else {
             // 一般アカウントの場合
@@ -66,14 +72,22 @@ class ItemController extends Controller
         $user = Auth::user();
         // ページ取得
         $page = $request->input('page');
+        // 商品のステータス
+        $status = 'active';
+        if ($page == 'archive') {
+            if (Gate::allows('view-user', $user)) {
+                $status = 'delete';
+            } else {
+                $page = 'index';
+                redirect(route("items.$page"));
+            }
+        }
 
         // 検索タイプ
         $search_type = $request->input('search_type');
         // 検索ワードに基づいて商品を検索
         $keyword = $request->input('keyword');
 
-        // ステータス
-        $status = $request->input('status');
         // ステータスに即した商品
         $items = Item::where('status', '=', "$status");
 
@@ -98,12 +112,12 @@ class ItemController extends Controller
         } else {
             // 全体検索
             $items = $items->where(function ($query) use ($keyword) {
-                    $query->where('name', 'like', "%$keyword%")
-                        ->orWhereHas('itemType', function ($subquery) use ($keyword) {
-                            $subquery->where('name', 'like', "%$keyword%");
-                        })
-                        ->orWhere('detail', 'like', "%$keyword%");
-                })
+                $query->where('name', 'like', "%$keyword%")
+                    ->orWhereHas('itemType', function ($subquery) use ($keyword) {
+                        $subquery->where('name', 'like', "%$keyword%");
+                    })
+                    ->orWhere('detail', 'like', "%$keyword%");
+            })
                 ->get();
 
         }
@@ -114,9 +128,7 @@ class ItemController extends Controller
             return $item;
         });
 
-        // $items->where('status', '=', $status);
-
-        return view("item.$page", compact('user', 'items'));
+        return view("item.$page", compact('user', 'items', 'page'));
     }
 
 
@@ -214,10 +226,14 @@ class ItemController extends Controller
 
     public function convertStatus(Request $request)
     {
+        // 商品取得
         $item = new Item;
         $item->convertStatus($request->item_id);
 
-        return redirect('/items');
+        // ページ取得
+        $page = $request->page;
+
+        return redirect(route("items.$page"));
     }
 
 }
