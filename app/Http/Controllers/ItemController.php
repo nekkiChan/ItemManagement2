@@ -192,6 +192,12 @@ class ItemController extends Controller
                     'detail' => $request->detail
                 ]);
 
+                // 種別ID→種別名
+                $items->transform(function ($item) {
+                    $item->type = $item->itemType->name;
+                    return $item;
+                });
+
                 return view("item.$page", compact('user', 'items'));
             } else if ($request->isMethod('get')) {
                 // GETリクエストのとき
