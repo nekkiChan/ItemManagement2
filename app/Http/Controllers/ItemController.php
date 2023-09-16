@@ -97,17 +97,26 @@ class ItemController extends Controller
             )->get();
         } else {
             // 全体検索
-            $items = $items->where(
-                function ($query) use ($keyword) {
+            // $items = $items->where('status', '=', $status)->where(
+            //     function ($query) use ($keyword) {
+            //         $query->where('name', 'like', "%$keyword%")
+            //             ->orWhere('detail', 'like', "%$keyword%");
+            //     }
+            // )->orWhereHas(
+            //         'itemType',
+            //         function ($query) use ($keyword) {
+            //             $query->where('name', 'like', "%$keyword%");
+            //         }
+            //     )->get();
+            $items = $items->where(function ($query) use ($keyword) {
                     $query->where('name', 'like', "%$keyword%")
+                        ->orWhereHas('itemType', function ($subquery) use ($keyword) {
+                            $subquery->where('name', 'like', "%$keyword%");
+                        })
                         ->orWhere('detail', 'like', "%$keyword%");
-                }
-            )->orWhereHas(
-                    'itemType',
-                    function ($query) use ($keyword) {
-                        $query->where('name', 'like', "%$keyword%");
-                    }
-                )->get();
+                })
+                ->get();
+
         }
 
         // 種別ID→種別名
@@ -115,6 +124,8 @@ class ItemController extends Controller
             $item->type = $item->itemType->name;
             return $item;
         });
+
+        // $items->where('status', '=', $status);
 
         return view("item.$page", compact('user', 'items'));
     }
