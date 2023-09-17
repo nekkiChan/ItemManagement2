@@ -7,16 +7,25 @@ use App\Models\ItemType;
 
 class ItemService
 {
+    /**
+     * 商品取得
+     */
     public function getActiveItems()
     {
         return Item::with('itemType')->where('status', '!=', 'delete')->get();
     }
 
+    /**
+     * アーカイブ済み商品取得
+     */
     public function getDeletedItems()
     {
         return Item::with('itemType')->where('status', '=', 'delete')->get();
     }
 
+    /**
+     * 商品検索
+     */
     public function searchItems($status, $searchType, $keyword)
     {
         $items = Item::where('status', $status);
@@ -28,6 +37,9 @@ class ItemService
         return $items->get();
     }
 
+    /**
+     * 商品登録
+     */
     public function addItem($data)
     {
         $itemType = ItemType::firstOrCreate(['name' => $data['type']]);
@@ -39,6 +51,9 @@ class ItemService
         ]);
     }
 
+    /**
+     * 商品更新
+     */
     public function updateItem($data)
     {
         $itemType = ItemType::firstOrCreate(['name' => $data['type']]);
@@ -50,22 +65,56 @@ class ItemService
         ]);
     }
 
+    /**
+     * IDから商品を取得
+     */
     public function getItemById($itemId)
     {
         return Item::with('itemType')->find($itemId);
     }
 
+    /**
+     * ステータスから商品を取得
+     */
     public function getItemsByStatus($status)
     {
         return Item::with('itemType')->where('status', $status)->get();
     }
 
+    /**
+     * IDからステータスを取得
+     */
+    public function getStatusById($id)
+    {
+        return Item::where('id', '=', $id)->first()->status;
+    }
+
+
+    /**
+     * IDからページ名を取得
+     */
+    public function getPageNameById($id)
+    {
+        if ($this->getStatusById($id) == 'active') {
+            return 'index';
+        } elseif ($this->getStatusById($id) == 'delete') {
+            return 'archive';
+        }
+    }
+
+
+    /**
+     * ステータス変換
+     */
     public function convertItemStatus($itemId)
     {
         $item = Item::find($itemId);
         $item->convertStatus($itemId);
     }
 
+    /**
+     * 絞り込み検索
+     */
     private function applySearchCriteria($query, $searchType, $keyword)
     {
         if ($searchType == 'type') {

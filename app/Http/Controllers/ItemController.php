@@ -16,6 +16,9 @@ class ItemController extends Controller
         $this->itemService = $itemService;
     }
 
+    /**
+     * 商品一覧画面への遷移
+     */
     public function index(Request $request)
     {
         $user = Auth::user();
@@ -25,6 +28,9 @@ class ItemController extends Controller
         return view('item.index', compact('user', 'items', 'page'));
     }
 
+    /**
+     * アーカイブ一覧画面への遷移
+     */
     public function archive(Request $request)
     {
         $user = Auth::user();
@@ -39,6 +45,9 @@ class ItemController extends Controller
         return view('item.archive', compact('user', 'items', 'page'));
     }
 
+    /**
+     * 商品検索機能
+     */
     public function search(Request $request)
     {
         $user = Auth::user();
@@ -52,6 +61,9 @@ class ItemController extends Controller
         return view("item.$page", compact('user', 'items', 'page'));
     }
 
+    /**
+     * 商品登録機能
+     */
     public function add(Request $request)
     {
         $user = Auth::user();
@@ -74,11 +86,14 @@ class ItemController extends Controller
         }
     }
 
+    /**
+     * 商品編集機能
+     */
     public function edit(Request $request)
     {
         $user = Auth::user();
-        $page = $request->input('page');
-        $status = $request->input('status');
+        $page = $this->itemService->getPageNameById($request->id);
+        $status = $this->itemService->getStatusById($request->id);
         $items = $this->itemService->getItemsByStatus($status);
 
         if (Gate::allows('view-user', $user)) {
@@ -103,10 +118,15 @@ class ItemController extends Controller
         }
     }
 
+    /**
+     * 商品削除・削除取り消し
+     */
     public function convertStatus(Request $request)
     {
+        // ページ取得
+        $page = $this->itemService->getPageNameById($request->item_id);
+        // ステータス変換
         $this->itemService->convertItemStatus($request->item_id);
-        $page = $request->page;
 
         return redirect(route("items.$page"));
     }

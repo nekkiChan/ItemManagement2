@@ -23,8 +23,6 @@
                             <form method="GET" action="{{ route('items.edit') }}" class="d-flex align-items-center">
                                 @csrf
                                 <input type="hidden" name="item_id" value="{{ $item->id }}">
-                                <input type="hidden" name="status" value="{{ $item->status }}">
-                                <input type="hidden" name="page" value="{{ $page }}">
                                 <button type="submit" class="btn btn-link p-0 m-0">
                                     <img src="{{ asset('img/edit.svg') }}" alt="" style="height: 20px;"
                                         class="mr-2">
@@ -34,7 +32,6 @@
                                 class="d-flex align-items-center">
                                 @csrf
                                 <input type="hidden" name="item_id" value="{{ $item->id }}">
-                                <input type="hidden" name="page" value="{{ $page }}">
                                 <button type="submit" class="btn btn-link p-0 m-0">
                                     <img src="{{ asset("img/$icon") }}" alt="" style="height: 20px;"
                                         class="ml-2">
