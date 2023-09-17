@@ -7,6 +7,7 @@ return [
         'email' => 'メールアドレス',
         'password' => 'パスワード',
         'password_confirmation' => 'パスワード（確認用）',
+        'type' => '種別',
     ],
     'custom' => [
         'email' => [
@@ -15,6 +16,10 @@ return [
         'password' => [
             'confirmed' => 'パスワードは少なくとも8文字で、確認用と一致する必要があります。',
         ],
+    ],
+    'required' => ':attribute は必須です。',
+    'max' => [
+        'string' => ':attribute は :max 文字以下で入力してください。',
     ],
 ];
 
