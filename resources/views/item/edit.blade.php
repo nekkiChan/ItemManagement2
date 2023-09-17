@@ -32,7 +32,7 @@
                         <div class="form-group">
                             <label for="type">種別</label>
                             <input type="text" class="form-control" id="type" name="type"
-                                placeholder="種別"value="{{ $item->type }}">
+                                placeholder="種別"value="{{ $item->itemType->name }}">
                         </div>
 
                         <div class="form-group">

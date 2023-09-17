@@ -55,6 +55,11 @@ class ItemService
         return Item::with('itemType')->find($itemId);
     }
 
+    public function getItemsByStatus($status)
+    {
+        return Item::with('itemType')->where('status', $status)->get();
+    }
+
     public function convertItemStatus($itemId)
     {
         $item = Item::find($itemId);

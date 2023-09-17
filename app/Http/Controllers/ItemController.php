@@ -92,7 +92,7 @@ class ItemController extends Controller
 
                 $items = $this->itemService->getItemsByStatus($status);
 
-                return view("item.$page", compact('user', 'items'));
+                return view("item.$page", compact('user', 'items', 'page'));
             } elseif ($request->isMethod('get')) {
                 $item = $this->itemService->getItemById($request->item_id);
 
