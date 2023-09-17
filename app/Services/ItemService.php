@@ -58,7 +58,7 @@ class ItemService
     public function convertItemStatus($itemId)
     {
         $item = Item::find($itemId);
-        $item->convertStatus();
+        $item->convertStatus($itemId);
     }
 
     private function applySearchCriteria($query, $searchType, $keyword)
