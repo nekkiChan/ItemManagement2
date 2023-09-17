@@ -92,8 +92,8 @@ class ItemController extends Controller
     public function edit(Request $request)
     {
         $user = Auth::user();
-        $page = $this->itemService->getPageNameById($request->id);
-        $status = $this->itemService->getStatusById($request->id);
+        $page = $this->itemService->getPageNameById($request->item_id);
+        $status = $this->itemService->getStatusById($request->item_id);
         $items = $this->itemService->getItemsByStatus($status);
 
         if (Gate::allows('view-user', $user)) {
