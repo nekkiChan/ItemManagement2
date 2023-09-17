@@ -70,26 +70,17 @@ class ItemController extends Controller
     {
         // ユーザー情報取得
         $user = Auth::user();
+
         // ページ取得
         $page = $request->input('page');
         // 商品のステータス
-        $status = 'active';
-        if ($page == 'archive') {
-            if (Gate::allows('view-user', $user)) {
-                $status = 'delete';
-            } else {
-                $page = 'index';
-                redirect(route("items.$page"));
-            }
-        }
-
+        $status = $request->input('status');
+        // ステータスに即した商品一覧
+        $items = Item::where('status', '=', "$status");
         // 検索タイプ
         $search_type = $request->input('search_type');
         // 検索ワードに基づいて商品を検索
         $keyword = $request->input('keyword');
-
-        // ステータスに即した商品
-        $items = Item::where('status', '=', "$status");
 
         // 検索ワードが空欄の場合、絞り込みはしない
         if (is_null($keyword)) {

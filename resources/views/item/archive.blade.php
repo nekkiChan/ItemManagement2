@@ -13,8 +13,10 @@
                 <div class="card-header">
                     <h3 class="card-title">アーカイブ一覧</h3>
                     <div class="card-tools">
-                        <form action="{{ route('items.search') }}" method="GET" class="input-group input-group-sm">
+                        <form action="{{ route('items.search') }}" method="POST" class="input-group input-group-sm">
+                            @csrf
                             <input type="hidden" name="page" value="{{ $page }}">
+                            <input type="hidden" name="status" value="{{ $items->first()->status }}">
                             <select name="search_type">
                                 <option value="">全体検索</option>
                                 <option value="name">名前検索</option>
