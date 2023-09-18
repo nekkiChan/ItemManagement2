@@ -12,12 +12,14 @@
             @if ($errors->any())
                 <div class="alert alert-danger">
                     <ul>
-                       @foreach ($errors->all() as $error)
-                          <li>{{ $error }}</li>
-                       @endforeach
+                        @foreach ($errors->all() as $error)
+                            <li>@lang($error)</li>
+                        @endforeach
                     </ul>
                 </div>
             @endif
+
+
 
             <div class="card card-primary">
                 <form method="POST">

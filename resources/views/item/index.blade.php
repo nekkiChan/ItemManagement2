@@ -2,6 +2,10 @@
 
 @section('title', '商品一覧')
 
+@php
+    $icon = 'trash.svg';
+@endphp
+
 @section('content_header')
     <h1>商品一覧</h1>
 @stop
@@ -13,42 +17,28 @@
                 <div class="card-header">
                     <h3 class="card-title">商品一覧</h3>
                     <div class="card-tools">
-                        <div class="input-group input-group-sm">
+                        <form action="{{ route('items.search') }}" method="POST" class="input-group input-group-sm">
+                            @csrf
+                            <input type="hidden" name="page" value="{{ $page }}">
+                            <input type="hidden" name="status" value="{{ $items->first()->status }}">
+                            <select name="search_type">
+                                <option value="">全体検索</option>
+                                <option value="name">名前検索</option>
+                                <option value="type">種別検索</option>
+                                <option value="detail">詳細検索</option>
+                            </select>
+                            <input type="text" name="keyword" class="form-control" placeholder="キーワードを入力">
                             <div class="input-group-append">
-                                <a href="{{ url('items/add') }}" class="btn btn-default">商品登録</a>
+                                <button type="submit" class="btn btn-default">検索</button>
                             </div>
-                        </div>
-                    </div>
-                </div>
+                        </form>
+                    </div><!-- /.card-tools -->
+                </div><!-- /.card-header -->
                 <div class="card-body table-responsive p-0">
-                    <table class="table table-hover text-nowrap">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>名前</th>
-                                <th>種別</th>
-                                <th>詳細</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($items as $item)
-                                <tr>
-                                    <td>{{ $item->id }}</td>
-                                    <td>{{ $item->name }}</td>
-                                    <td>{{ $item->type }}</td>
-                                    <td>{{ $item->detail }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                    @component('components.item.item-list', ['user' => $user, 'items' => $items, 'page' => $page, 'icon' => $icon])
+                    @endcomponent
                 </div>
             </div>
         </div>
     </div>
-@stop
-
-@section('css')
-@stop
-
-@section('js')
 @stop
